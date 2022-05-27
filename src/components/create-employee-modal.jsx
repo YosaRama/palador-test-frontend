@@ -16,7 +16,7 @@ function CreateEmployeeModal(props) {
     form.validateFields().then((value) => {
       const submission = {
         name: value.name,
-        manager_id: value.managerId,
+        managerId: +value.managerId,
       };
       onSubmit(submission);
       handleShowModal();
@@ -34,7 +34,20 @@ function CreateEmployeeModal(props) {
               <Input placeholder="Input employee name" />
             </Form.Item>
             <Form.Item label="Manager" name={"managerId"}>
-              <Select placeholder="Select Manager (Optional)">
+              <Select
+                placeholder="Select Manager (Optional)"
+                showSearch
+                filterOption={(input, option) =>
+                  option.children
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0 ||
+                  option.value
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+              >
                 {allEmployees &&
                   allEmployees.map((item) => {
                     return <Option key={item.employee_id}>{item.name}</Option>;

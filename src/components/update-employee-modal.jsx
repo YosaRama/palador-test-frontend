@@ -7,7 +7,7 @@ function UpdateEmployeeModal(props) {
   const { onMutate, showModal, handleShowModal, id } = props;
 
   //? ============== Data Hook ============= ?//
-  const { data: singleEmployees, onEdit } = useOrganization({ singleId: id });
+  const { data: singleEmployees, onEdit } = useOrganization({ singleId: +id });
   const { data: allEmployees } = useOrganizations();
   // * ====================================== * //
 
@@ -56,6 +56,8 @@ function UpdateEmployeeModal(props) {
               <Form.Item label="Manager" name={"managerId"}>
                 <Select
                   placeholder="Select Manager (Optional)"
+                  allowClear
+                  showSearch
                   filterOption={(input, option) =>
                     option.children
                       .toString()

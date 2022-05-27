@@ -68,9 +68,10 @@ function App() {
     Modal.confirm({
       title: "Are you sure?",
       content: "You want be able to revert this data!",
-      onOk: () => {
+      onOk: async () => {
         message.success({ content: "Success delete employees" });
-        onDelete(id);
+        await onDelete(id);
+        onMutate();
       },
     });
   };

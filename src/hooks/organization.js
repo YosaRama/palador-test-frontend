@@ -43,10 +43,9 @@ export const useOrganizations = () => {
     async (singleId) => {
       try {
         setLoading(true);
-        const { data: res } = await api.delete(pathName + `/${singleId}`, data);
+        const { data: res } = await api.delete(pathName + `/${singleId}`);
         if (res.success) {
           mutate();
-
           return res.success;
         } else {
           return res.success;
@@ -57,7 +56,7 @@ export const useOrganizations = () => {
         setLoading(false);
       }
     },
-    [data, mutate]
+    [mutate]
   );
   // ==========================
 
