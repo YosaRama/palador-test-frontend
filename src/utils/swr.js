@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: process.env.REACT_APP_SERVER_PORT,
   timeout: 40000,
   headers: {
     Accept: "application/json, text/plain, */*",
