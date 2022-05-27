@@ -73,7 +73,7 @@ export const useOrganizations = () => {
 
 //? ============== SPECIFIC HOOK (SINGLE DATA) ============= ?//
 
-export const useTemplate = ({ singleId }) => {
+export const useOrganization = ({ singleId }) => {
   const pathKeys = `${pathName}/${singleId}`;
   const [loading, setLoading] = useState(false);
 
