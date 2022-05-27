@@ -4,3 +4,15 @@
   max-width: 1280px;
   margin: 0 auto;
 }
+
+.employee-name {
+  cursor: pointer;
+}
+
+.employee-name:hover {
+  color: rgb(8, 156, 178);
+}
+
+.close-employees:hover {
+  color: rgb(178, 8, 8);
+}

@@ -1,17 +1,18 @@
 /* eslint-disable array-callback-return */
 
 // Libs
-import { Button, Card, Col, Input, Modal, Row, Tag } from "antd";
+import { Button, Card, Col, Input, message, Modal, Row, Tag } from "antd";
 import { CloseCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
 // Data Hook
 import { useOrganizations } from "./hooks/organization";
 import { useRef, useState } from "react";
 import CreateEmployeeModal from "./components/create-employee-modal";
+import UpdateEmployeeModal from "./components/update-employee-modal";
 
 function App() {
   //? ============== Organization Hook ============= ?//
-  const { data, onAdd } = useOrganizations();
+  const { data, onAdd, onDelete, onMutate } = useOrganizations();
 
   //? Parsing Data Function
   function parsingData(item) {
@@ -63,10 +64,14 @@ function App() {
   // * ====================================== * //
 
   //? ============== Handle Delete ============= ?//
-  const handleDelete = () => {
+  const handleDelete = (id) => {
     Modal.confirm({
       title: "Are you sure?",
       content: "You want be able to revert this data!",
+      onOk: () => {
+        message.success({ content: "Success delete employees" });
+        onDelete(id);
+      },
     });
   };
   // * ====================================== * //
@@ -77,12 +82,17 @@ function App() {
       return (
         <div style={{ marginLeft: 50 }}>
           <Tag style={{ marginBottom: 15 }}>
-            {child.name}
+            <span
+              className="employee-name"
+              onClick={() => handleShowEditModal(child.employee_id)}
+            >
+              {child.name}
+            </span>
             <span
               style={{ margin: "0 0 0 5px", cursor: "pointer" }}
-              onClick={handleDelete}
+              onClick={() => handleDelete(child.employee_id)}
             >
-              <CloseCircleOutlined />
+              <CloseCircleOutlined className="close-employees" />
             </span>
           </Tag>
           {printData(child)}
@@ -92,10 +102,19 @@ function App() {
   }
   // * ====================================== * //
 
-  //? ============== Handle Modal ============= ?//
+  //? ============== Handle Create Modal ============= ?//
   const [showModal, setShowModal] = useState(false);
   const handleShowModal = () => {
     setShowModal(!showModal);
+  };
+  // * ====================================== * //
+
+  //? ============== Handle Edit Modal ============= ?//
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editedId, setEditedId] = useState();
+  const handleShowEditModal = (id) => {
+    setShowEditModal(!showEditModal);
+    setEditedId(id);
   };
   // * ====================================== * //
 
@@ -133,9 +152,17 @@ function App() {
                 return (
                   <>
                     <Tag style={{ marginBottom: 15 }}>
-                      {item.name}
-                      <span style={{ margin: "0 0 0 5px", cursor: "pointer" }}>
-                        <CloseCircleOutlined />
+                      <span
+                        className="employee-name"
+                        onClick={() => handleShowEditModal(item.employee_id)}
+                      >
+                        {item.name}
+                      </span>
+                      <span
+                        style={{ margin: "0 0 0 5px", cursor: "pointer" }}
+                        onClick={() => handleDelete(item.employee_id)}
+                      >
+                        <CloseCircleOutlined className="close-employees" />
                       </span>
                     </Tag>
                     <div>{printData(item)}</div>
@@ -144,11 +171,22 @@ function App() {
               })}
           </Card>
         </Col>
-        <CreateEmployeeModal
-          onSubmit={onAdd}
-          showModal={showModal}
-          handleShowModal={handleShowModal}
-        />
+        {showModal && (
+          <CreateEmployeeModal
+            onSubmit={onAdd}
+            showModal={showModal}
+            handleShowModal={handleShowModal}
+          />
+        )}
+        {showEditModal && (
+          <UpdateEmployeeModal
+            onSubmit={onAdd}
+            showModal={showEditModal}
+            handleShowModal={handleShowEditModal}
+            id={editedId}
+            onMutate={onMutate}
+          />
+        )}
       </section>
     </>
   );

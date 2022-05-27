@@ -64,6 +64,7 @@ export const useOrganizations = () => {
   return {
     data: results,
     loading: (!error && !data) || isValidating || loading,
+    onMutate: mutate,
     onAdd,
     onDelete,
   };

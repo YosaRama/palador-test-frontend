@@ -3,25 +3,34 @@ import { Col, Form, Input, message, Modal, Select } from "antd";
 import { useOrganization, useOrganizations } from "../hooks/organization";
 const { Option } = Select;
 
-function CreateEmployeeModal(props) {
-  const { onSubmit, showModal, handleShowModal, id } = props;
+function UpdateEmployeeModal(props) {
+  const { onMutate, showModal, handleShowModal, id } = props;
 
   //? ============== Data Hook ============= ?//
-  const { data: singleEmployees } = useOrganization({ singleId: id });
-  const { data: allEmployees, onDelete } = useOrganizations();
+  const { data: singleEmployees, onEdit } = useOrganization({ singleId: id });
+  const { data: allEmployees } = useOrganizations();
+  // * ====================================== * //
+
+  //? ============== Initial Data ============= ?//
+  const singleEmployeesParse = singleEmployees && {
+    employeeId: singleEmployees.employee_id,
+    managerId: singleEmployees.manager_id,
+    name: singleEmployees.name,
+  };
   // * ====================================== * //
 
   //? ============== Handle Submit ============= ?//
   const [form] = Form.useForm();
   const handleSubmit = () => {
-    form.validateFields().then((value) => {
+    form.validateFields().then(async (value) => {
       const submission = {
         name: value.name,
         manager_id: value.managerId,
       };
-      onSubmit(submission);
+      await onEdit(submission);
       handleShowModal();
-      message.success("Success create new employee");
+      message.success("Success update new employee");
+      onMutate();
     });
   };
   // * ====================================== * //
@@ -35,29 +44,53 @@ function CreateEmployeeModal(props) {
         okText="Save"
       >
         <Col style={{ margin: "30px 0 " }}>
-          <Form form={form} layout={"vertical"}>
-            <Form.Item label="Employee Name" name={"name"}>
-              <Input placeholder="Input employee name" />
-            </Form.Item>
-            <Form.Item label="Manager" name={"managerId"}>
-              <Select placeholder="Select Manager (Optional)">
-                {allEmployees &&
-                  allEmployees.map((item) => {
-                    return <Option key={item.employee_id}>{item.name}</Option>;
-                  })}
-              </Select>
-            </Form.Item>
-          </Form>
+          {singleEmployees && (
+            <Form
+              form={form}
+              layout={"vertical"}
+              initialValues={singleEmployeesParse}
+            >
+              <Form.Item label="Employee Name" name={"name"}>
+                <Input placeholder="Input employee name" />
+              </Form.Item>
+              <Form.Item label="Manager" name={"managerId"}>
+                <Select
+                  placeholder="Select Manager (Optional)"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0 ||
+                    option.value
+                      .toString()
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {allEmployees &&
+                    allEmployees.map((item, index) => {
+                      return (
+                        <Option key={index} value={item.employee_id}>
+                          {item.name}
+                        </Option>
+                      );
+                    })}
+                </Select>
+              </Form.Item>
+            </Form>
+          )}
         </Col>
       </Modal>
     </>
   );
 }
 
-CreateEmployeeModal.propTypes = {
+UpdateEmployeeModal.propTypes = {
   onSubmit: propTypes.func,
   showModal: propTypes.bool,
   handleShowModal: propTypes.func,
+  id: propTypes.number,
+  onMutate: propTypes.func,
 };
 
-export default CreateEmployeeModal;
+export default UpdateEmployeeModal;
